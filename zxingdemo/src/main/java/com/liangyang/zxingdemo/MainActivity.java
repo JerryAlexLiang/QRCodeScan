@@ -8,6 +8,9 @@ import android.widget.Button;
 
 import com.liangyang.zxingdemo.zxing.activity.CaptureActivity;
 
+/**
+ * zXing二维码
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
