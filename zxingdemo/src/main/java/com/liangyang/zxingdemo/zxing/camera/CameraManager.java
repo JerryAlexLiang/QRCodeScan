@@ -207,4 +207,26 @@ public class CameraManager {
 		}
 		return null;
 	}
+
+
+	/**
+	 * 修改代码：二维码扫描界面添加闪光灯的功能
+	 */
+	public boolean changeFlashlight(){
+		if (camera != null){
+			Camera.Parameters parameters = camera.getParameters();
+			//关闭闪关灯关键代码
+			if (Camera.Parameters.FLASH_MODE_TORCH.equals(parameters.getFlashMode())){
+				parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+				camera.setParameters(parameters);
+				return false;
+			}else {
+				//打开闪光灯关键代码
+				parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+				camera.setParameters(parameters);
+				return true;
+			}
+		}
+		return false;
+	}
 }
