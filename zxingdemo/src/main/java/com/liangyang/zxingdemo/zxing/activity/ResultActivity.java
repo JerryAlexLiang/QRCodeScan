@@ -1,8 +1,10 @@
 package com.liangyang.zxingdemo.zxing.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.widget.ImageView;
@@ -10,49 +12,62 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.liangyang.zxingdemo.R;
+import com.liangyang.zxingdemo.WebviewActivity;
 import com.liangyang.zxingdemo.zxing.decode.DecodeThread;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //import com.dtr.zxing.R;
 //import com.dtr.zxing.decode.DecodeThread;
 
 public class ResultActivity extends Activity {
 
-	private ImageView mResultImage;
-	private TextView mResultText;
+    private ImageView mResultImage;
+    private TextView mResultText;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_result);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_result);
 
-		Bundle extras = getIntent().getExtras();
+        Bundle extras = getIntent().getExtras();
 
-		mResultImage = (ImageView) findViewById(R.id.result_image);
-		mResultText = (TextView) findViewById(R.id.result_text);
+        mResultImage = (ImageView) findViewById(R.id.result_image);
+        mResultText = (TextView) findViewById(R.id.result_text);
 
-		if (null != extras) {
-			int width = extras.getInt("width");
-			int height = extras.getInt("height");
+        if (null != extras) {
+            int width = extras.getInt("width");
+            int height = extras.getInt("height");
 
-			LayoutParams lps = new LayoutParams(width, height);
-			lps.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
-			lps.leftMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-			lps.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-			
-			mResultImage.setLayoutParams(lps);
+            LayoutParams lps = new LayoutParams(width, height);
+            lps.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+            lps.leftMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
+            lps.rightMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
 
-			String result = extras.getString("result");
-			mResultText.setText(result);
+            mResultImage.setLayoutParams(lps);
 
-			Bitmap barcode = null;
-			byte[] compressedBitmap = extras.getByteArray(DecodeThread.BARCODE_BITMAP);
-			if (compressedBitmap != null) {
-				barcode = BitmapFactory.decodeByteArray(compressedBitmap, 0, compressedBitmap.length, null);
-				// Mutable copy:
-				barcode = barcode.copy(Bitmap.Config.RGB_565, true);
-			}
+            /**
+             * 修改代码
+             */
+            String result = extras.getString("result");
 
-			mResultImage.setImageBitmap(barcode);
-		}
-	}
+            //判断扫描的结果是否为url、是url直接跳转到网页中
+            Intent intent = new Intent(ResultActivity.this, WebviewActivity.class);
+            intent.putExtra("data", result);
+            startActivity(intent);
+            mResultText.setText(result);
+
+            Bitmap barcode = null;
+            byte[] compressedBitmap = extras.getByteArray(DecodeThread.BARCODE_BITMAP);
+            if (compressedBitmap != null) {
+                barcode = BitmapFactory.decodeByteArray(compressedBitmap, 0, compressedBitmap.length, null);
+                // Mutable copy:
+                barcode = barcode.copy(Bitmap.Config.RGB_565, true);
+            }
+
+            mResultImage.setImageBitmap(barcode);
+
+        }
+    }
 }
