@@ -28,7 +28,15 @@ public class WebviewActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
+                //view.loadUrl(url);
+                /**
+                 * webView加载网页出现("找不到网页net:err_unknown_url_scheme")
+                 * 解决方法：以"http","https"开头的url在本页用webview进行加载，其他链接进行跳转
+                 */
+                if (url.startsWith("http:") || url.startsWith("https:")) {
+                    view.loadUrl(url);
+                    return true;
+                }
                 return true;
             }
         });
